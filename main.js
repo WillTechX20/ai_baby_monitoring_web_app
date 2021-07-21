@@ -34,16 +34,35 @@ function setup(){
     statusBoolean=true;
 }    
 
+Math.toFlooredPercent=function(num){
+    return toString(this.floor(num*100))+'%';
+}
+
 function draw(){
     image(video, 0, 0, 380, 380);
+    currentRGBColor.red=random(255);
+    currentRGBColor.green=random(255);
+    currentRGBColor.blue=random(255);
+    statusH3.innerText='Status: Detecting Object(s)';
+    newObjectDetector.detect(video, gotResult);
+
+    for(i=0; i<detectedObjectArray.length; i++){
+        statusH3.innerText='Status: Object(s) Detected';
+        numberOfObjectsDetectedH3.innerText='Number of Objects Detected: '+detectedObjectArray.length;
+        fill(currentRGBColor.red, currentRGBColor.green, currentRGBColor.blue);
+        stroke(currentRGBColor.red, currentRGBColor.green, currentRGBColor.blue);
+        text(detectedObjectArray[i].label+' Percent: '+Math.toFlooredPercent(detectedObjectArray[i].confidence), detectedObjectArray[i].x+15, detectedObjectArray[i].y+15);
+        noFill();
+        rect(detectedObjectArray[i].x, detectedObjectArray[i].y, detectedObjectArray[i].width, detectedObjectArray[i].height);
+    }
+
     if(statusBoolean){
-        statusDiv.innerText='Status: Detecting Object(s)';
         newObjectDetector.detect(video, gotResult);
 
         var personDetectedBoolean=false;
         var objectDetectedBoolean=false;
+
         for(i=0; i<detectedObjectArray.length; i++){
-            statusDiv.innerText='Status: Object(s) Detected';
             objectDetectedBoolean=true;
             if(detectedObjectArray[i].label=='Person'){
                 personDetectedBoolean=true;
